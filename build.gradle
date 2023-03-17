@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.8-SNAPSHOT'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'org.jetbrains.kotlin.jvm' version '1.8.0'
 }
 
 group = 'com.example'
@@ -13,6 +14,13 @@ configurations {
         extendsFrom annotationProcessor
     }
 }
+ext {
+    set('springCloudVersion', "Hoxton.SR8")
+    mapstructVersion = "1.5.3.Final"
+    lombokVersion = "1.18.20"
+    lombokMapstructBindingVersion = "0.2.0"
+}
+
 
 repositories {
     mavenCentral()
@@ -21,11 +29,35 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation 'junit:junit:4.13.1'
+
+    /*
+        this example uses lombok directly over the annotationProcessor,
+        the io.freefair.lombok plugin works as well.
+        The freefair-lombok plugin is used in the example mapstruct-on-gradle-testcp-with-lombok
+     */
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}", "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
+
+implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.14.2'
+// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+// https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-mapper-asl
+    implementation 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
+//// https://mvnrepository.com/artifact/org.mapstruct/mapstruct
+//    implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+//// https://mvnrepository.com/artifact/org.mapstruct/mapstruct-processor
+//    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+
     implementation 'org.liquibase:liquibase-core'
-    compileOnly 'org.projectlombok:lombok'
+    // Lombok
+//    compileOnly 'org.projectlombok:lombok:1.18.2'
+//    annotationProcessor 'org.projectlombok:lombok:1.18.2'
     implementation 'org.postgresql:postgresql'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
@@ -33,11 +65,29 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-amqp:2.7.7'
 // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.14.1'
+// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-stream-rabbit
+    implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit:3.1.6'
+// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-stream-binder-rabbit
+    implementation 'org.springframework.cloud:spring-cloud-stream-binder-rabbit:3.1.6'
+
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.amqp:spring-rabbit-test'
+    testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }

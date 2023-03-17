@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
@@ -24,11 +25,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "tariff")
-public class Tariff
+public class Tariff implements Serializable
 {
+    private static final long serialVersionUID = 7156526077843531623L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long tariff_id;
+    @Column(name = "tariff_id")
+    private long tariffId;
 
     private String name;
 

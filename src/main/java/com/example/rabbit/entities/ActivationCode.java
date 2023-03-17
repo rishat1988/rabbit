@@ -24,24 +24,28 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+
 @Table(name = "activation_code")
-public class ActivationCode
+public class ActivationCode implements Serializable
 {
+    private static final long serialVersionUID = 715634534683281623L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long activation_code_id;
+    @Column(name = "activation_code_id")
+    private long activationCodeId;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "subscription_id",referencedColumnName="id")
-//    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Subscription subscription;
 
     @Column(name = "external_code_id")
